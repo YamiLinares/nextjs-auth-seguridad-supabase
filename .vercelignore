@@ -1,0 +1,11 @@
+# Nunca se suben en un despliegue con Vercel CLI
+.env
+.env.*
+!.env.example
+node_modules
+.next
+.vercel
+e2e-output
+AGENTS.md
+CLAUDE.md
+*.log

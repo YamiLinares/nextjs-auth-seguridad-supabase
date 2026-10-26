@@ -1,0 +1,110 @@
+ENTREGABLE
+==========
+
+Actividad: Implementar capas de seguridad a nivel de servidor y estrategias de
+posicionamiento orgánico para aplicaciones web profesionales.
+Práctica: Seguridad de autenticación con cookies httpOnly en Next.js.
+
+Proyecto: SecureGate (nextjs-auth-seguridad-supabase)
+Autora: YamiLinares
+
+Repositorio GitHub (público): https://github.com/YamiLinares/nextjs-auth-seguridad-supabase
+Sitio en producción (Vercel): https://nextjs-auth-seguridad-supabase.vercel.app
+
+DESCRIPCIÓN
+Aplicación de autenticación con Next.js 16 (App Router) y Supabase Auth. La
+sesión se guarda en cookies httpOnly que JavaScript no puede leer; toda la
+autenticación pasa por Server Actions y cada acceso a datos privados se
+verifica en el servidor.
+
+FUNCIONALIDADES
+- Registro con validación en el servidor y confirmación de email.
+- Inicio de sesión con email y contraseña, y redirección al panel.
+- Cierre de sesión (este dispositivo o todos) mediante Server Action.
+- Recuperación de contraseña por correo y página para definir una nueva.
+- Manejo de enlaces inválidos o caducados.
+- Panel privado con los datos del usuario y un perfil editable (tabla con RLS).
+- Navegación que cambia según la sesión; páginas 404 y de error.
+- Diseño responsive y accesible.
+
+TECNOLOGÍAS
+Next.js 16.4.3, React 19.3, TypeScript 5.9 (strict), @supabase/ssr 0.12.7,
+@supabase/supabase-js 2.118, Zod 4.6, Tailwind CSS 4.3, Vitest 5, Vercel.
+
+MEDIDAS DE SEGURIDAD
+- Cookies de sesión: HttpOnly, Secure en producción, SameSite=Lax, Path=/ y
+  7 días de duración. La sesión se renueva y los tokens rotan.
+- Verificación en el servidor con getUser() antes de entregar datos privados;
+  una sesión cerrada no da acceso aunque se reutilicen sus cookies.
+- proxy.ts: rechaza peticiones mutables de otro origen (CSRF), genera la CSP
+  con nonce, renueva la sesión y protege /dashboard.
+- Server Actions: validación con Zod, sin tokens ni contraseñas en las
+  respuestas o en los logs, y mensajes que no revelan si una cuenta existe.
+- Redirecciones limitadas a rutas internas (sin redirecciones abiertas).
+- XSS: React escapa el contenido; CSP con nonce y 'strict-dynamic'; ningún
+  token en localStorage ni sessionStorage.
+- Cabeceras: CSP, HSTS, X-Frame-Options, X-Content-Type-Options,
+  Referrer-Policy, Permissions-Policy y Cross-Origin-Opener-Policy.
+- Base de datos: Row Level Security, cada usuario solo accede a su perfil.
+- Respuestas privadas con Cache-Control: no-store.
+
+SEO TÉCNICO
+Metadatos title y description, Open Graph, lang="es", robots.txt,
+sitemap.xml (solo la página pública), noindex en las páginas de autenticación
+y privadas, URL canónica en producción e icono de la aplicación.
+
+ESTRUCTURA PRINCIPAL
+src/proxy.ts · src/actions/ · src/app/(auth)/ · src/app/(protected)/dashboard/
+src/app/auth/confirm/ · src/lib/supabase/ · src/lib/security/ · src/lib/auth/
+src/lib/validation/ · supabase/migrations/001_create_profiles.sql · tests/
+scripts/e2e-auth.mjs
+
+INSTALACIÓN
+git clone https://github.com/YamiLinares/nextjs-auth-seguridad-supabase.git
+cd nextjs-auth-seguridad-supabase
+npm install
+Copy-Item .env.example .env.local   (y completar las variables)
+
+VARIABLES DE ENTORNO (solo nombres)
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+NEXT_PUBLIC_SITE_URL
+E2E_TEST_EMAIL, E2E_TEST_PASSWORD (solo pruebas locales, nunca en Vercel)
+
+COMANDOS
+npm run dev          (http://localhost:3000)
+npm run build        (compilación de producción)
+npm run start
+npm run typecheck
+npm run lint
+npm test
+npm run verify
+npm run test:e2e -- <URL>
+
+RESULTADOS DE LAS PRUEBAS
+- TypeScript y ESLint: sin errores.
+- Pruebas unitarias: 49/49 aprobadas.
+- Compilación de producción: correcta.
+- Pruebas de extremo a extremo en navegador real: 62/62 aprobadas en local
+  y en producción (HTTPS). Cubren cookies, renovación de sesión, logout y
+  revocación, CSRF, cabeceras, XSS, validación en el servidor, redirecciones
+  y diseño responsive.
+- Error de red: mensaje seguro sin detalles internos (prueba manual).
+- Registro con verificación de email y recuperación de contraseña:
+  verificados manualmente en producción. El primer intento alcanzó el límite
+  de correos de Supabase y la app mostró el aviso correspondiente.
+- Revisión de secretos con Gitleaks: sin hallazgos.
+
+COMMITS
+1. feat: crear aplicación segura con Next.js y Supabase
+2. feat: implementar autenticación y protección de sesiones
+3. docs: documentar seguridad, pruebas y despliegue
+
+LIMITACIONES
+- El correo integrado de Supabase permite pocos envíos por hora; para uso
+  real se necesita SMTP propio.
+- Con las plantillas de email por defecto, el enlace debe abrirse en el
+  mismo navegador donde se inició el registro o la recuperación.
+- Un token de acceso sigue siendo válido criptográficamente hasta su
+  caducidad (1 h); por eso los datos privados se protegen con getUser().
+- Las medidas SEO mejoran la base técnica, pero no garantizan posiciones.
