@@ -1,0 +1,46 @@
+@import "tailwindcss";
+
+/* Identidad SecureGate: azul noche, índigo y violeta con neutros fríos. */
+@theme {
+  --color-night-950: #070b1a;
+  --color-night-900: #0c1229;
+  --color-night-800: #141b3a;
+  --color-night-700: #1f2852;
+  --color-brand-50: #eef0ff;
+  --color-brand-100: #dfe3ff;
+  --color-brand-300: #a5b0ff;
+  --color-brand-400: #8190ff;
+  --color-brand-500: #6366f1;
+  --color-brand-600: #4f46e5;
+  --color-brand-700: #4338ca;
+  --color-violet-accent: #8b5cf6;
+  --color-ink: #0f172a;
+  --color-ink-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-canvas: #f6f7fb;
+
+  --font-sans: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-heading), ui-sans-serif, system-ui, sans-serif;
+
+  --shadow-card: 0 1px 2px rgb(15 23 42 / 0.05), 0 12px 32px -16px rgb(15 23 42 / 0.25);
+}
+
+body {
+  background: var(--color-canvas);
+  color: var(--color-ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-brand-400);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
