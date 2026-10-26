@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import type { ReactNode } from "react";
 import { CodeIcon, CookieIcon, DatabaseIcon, LockIcon, ServerIcon, ShieldIcon } from "@/components/ui/icons";
+import { getSessionUserId } from "@/lib/auth/dal";
 import { getSiteUrl } from "@/lib/env";
 
 const siteUrl = getSiteUrl();
@@ -46,7 +47,8 @@ const FEATURES: { icon: ReactNode; title: string; text: string }[] = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const userId = await getSessionUserId();
 
   return (
     <>
@@ -67,9 +69,20 @@ export default function HomePage() {
             JavaScript no puede leer y cada acceso a datos privados se verifica en el servidor.
           </p>
           <div className="mt-10 flex flex-wrap gap-3">
-            <Link href="#capas" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold shadow-lg hover:bg-brand-500">
-              Ver las capas de seguridad
-            </Link>
+            {userId ? (
+              <Link href="/dashboard" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold shadow-lg hover:bg-brand-500">
+                Ir a mi panel
+              </Link>
+            ) : (
+              <>
+                <Link href="/registro" className="rounded-xl bg-brand-600 px-6 py-3 font-semibold shadow-lg hover:bg-brand-500">
+                  Crear una cuenta
+                </Link>
+                <Link href="/login" className="rounded-xl border border-white/20 px-6 py-3 font-semibold hover:bg-white/10">
+                  Iniciar sesión
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </section>
